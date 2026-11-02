@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ICT MCQ Exam</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap">
+<style>
+:root{--bg:#f2f4f3;--sf:#fff;--fg:#15201d;--mu:#5a6b66;--ln:#d6dedb;--ac:#27408b;--acf:#fff;--acs:#e3e9f8;--ok:#1b7a4a;--oks:#dff2e7;--bad:#b3261e;--bads:#fbe4e1;--warn:#b26a00}
+@media(prefers-color-scheme:dark){:root{--bg:#0f1514;--sf:#18211f;--fg:#e6eeeb;--mu:#9db0aa;--ln:#2b3835;--ac:#8fa8f2;--acf:#0d1330;--acs:#222c52;--ok:#5fd18f;--oks:#173528;--bad:#ff8a80;--bads:#3a1d1a;--warn:#f0b04a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:400 16px/1.65 "Hind Siliguri","Noto Sans Bengali",system-ui,sans-serif;padding:0 max(14px,env(safe-area-inset-right)) 40px max(14px,env(safe-area-inset-left))}
+.wrap{max-width:680px;margin:0 auto}
+button{font:inherit;color:inherit;cursor:pointer}
+h1,h2{margin:0}
+.top{position:sticky;top:0;z-index:5;background:var(--bg);padding:max(10px,env(safe-area-inset-top)) 0 8px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.timer{font:700 22px/1 ui-monospace,Menlo,monospace;font-variant-numeric:tabular-nums;padding:8px 12px;border-radius:10px;background:var(--sf);border:1px solid var(--ln)}
+.timer.low{color:var(--bad);border-color:var(--bad)}
+.cnt{color:var(--mu);font-size:15px}
+.btn{border:1.5px solid var(--ln);background:var(--sf);border-radius:10px;min-height:48px;padding:0 16px;font-weight:600}
+.btn.main{background:var(--ac);border-color:var(--ac);color:var(--acf)}
+.btn.sub{background:var(--bad);border-color:var(--bad);color:#fff}
+.btn:disabled{opacity:.4;cursor:default}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:14px;padding:18px 16px;display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.qn{font-size:14px;color:var(--mu);font-weight:600}
+.q{font-size:19px;line-height:1.6;font-weight:500;margin:0;white-space:pre-line;overflow-wrap:anywhere}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:12px;align-items:flex-start;text-align:left;width:100%;border:1.5px solid var(--ln);background:var(--bg);border-radius:10px;padding:12px 14px;min-height:48px;overflow-wrap:anywhere}
+.opt .k{flex:none;width:26px;height:26px;border-radius:50%;border:1.5px solid var(--mu);display:grid;place-items:center;font-size:13px;color:var(--mu)}
+.opt.sel{background:var(--acs);border-color:var(--ac)}
+.opt.sel .k{background:var(--ac);border-color:var(--ac);color:var(--acf)}
+.nav{display:flex;gap:10px}
+.nav .btn{flex:1}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(40px,1fr));gap:6px;margin-top:14px}
+.dot{aspect-ratio:1;border:1px solid var(--ln);background:var(--sf);border-radius:8px;font:600 13px ui-monospace,Menlo,monospace;padding:0}
+.dot.a{background:var(--acs);border-color:var(--ac);color:var(--ac)}
+.dot.c{outline:2px solid var(--ac);outline-offset:1px}
+.center{min-height:80vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;text-align:center}
+.center h1{font-size:30px}
+.center .btn{min-width:200px}
+.score{font:700 52px/1 ui-monospace,Menlo,monospace}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stats div{border-radius:10px;padding:10px 4px;font-weight:600}
+.stats b{display:block;font-size:24px;font-family:ui-monospace,Menlo,monospace}
+.s-ok{background:var(--oks);color:var(--ok)}.s-bad{background:var(--bads);color:var(--bad)}.s-sk{background:var(--acs);color:var(--ac)}
+.wr{border:1px solid var(--ln);border-radius:12px;padding:14px;margin-top:10px;background:var(--sf)}
+.wr .q{font-size:17px}
+.ln{display:flex;gap:8px;margin-top:8px;padding:8px 10px;border-radius:8px;overflow-wrap:anywhere}
+.ln.y{background:var(--bads);color:var(--bad)}.ln.r{background:var(--oks);color:var(--ok)}.ln.s{background:var(--acs);color:var(--ac)}
+.ln span:first-child{flex:none;font-weight:700}
+h2{font-size:20px;margin:20px 0 4px}
+.modal{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.55);display:grid;place-items:center;padding:20px}
+.mbox{background:var(--sf);border-radius:14px;padding:20px 16px;width:100%;max-width:400px;display:flex;flex-direction:column;gap:16px}
+.mbox p{margin:0;font-size:17px;font-weight:500}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<script>
+// [chapter, question, [correct, w1, w2, w3], noShuffle]
+const R=[
+[1,"WWW (ওয়ার্ল্ড ওয়াইড ওয়েব)-এর জনক কে?",["টিম বার্নার্স লি","ভিন্ট সার্ফ","বিল গেটস","মার্ক জাকারবার্গ"]],
+[1,"বিশ্বায়নের ফলে—\ni. সময় ও দূরত্বের বাধা কমেছে\nii. তথ্য আদান-প্রদান দ্রুত হয়েছে\niii. ই-কমার্সের প্রসার ঘটেছে\nনিচের কোনটি সঠিক?",["i ও ii","i ও iii","ii ও iii","i, ii ও iii"],4],
+[1,"ICT-এর পূর্ণরূপ কোনটি?",["Information and Communication Technology","Information and Computer Technology","Internet and Communication Technology","Information and Communication Technique"]],
+[1,"বিশ্বগ্রাম (Global Village) ধারণা বাস্তবায়নের প্রধান কারণ কোনটি?",["যোগাযোগ প্রযুক্তির উন্নয়ন","জনসংখ্যা বৃদ্ধি","কৃষিজ উৎপাদন বৃদ্ধি","শিল্পকারখানা স্থাপন"]],
+[1,"নাফিস ঘরে বসে অনলাইনে কার্ডের মাধ্যমে মূল্য পরিশোধ করে একটি বই কিনল এবং বইটি তার ঠিকানায় পৌঁছে গেল। নাফিস কোন সেবা ব্যবহার করেছে?",["ই-কমার্স","ই-লার্নিং","টেলিমেডিসিন","ই-গভর্নেন্স"]],
+[1,"নিচের কোনটি ICT-এর ব্যবহার নয়?",["কাগজ তৈরির প্রক্রিয়া","ই-লার্নিং","ই-কমার্স","টেলিমেডিসিন"]],
+[1,"নিচের কোনটি বায়োমেট্রিক্সের উদাহরণ নয়?",["পাসওয়ার্ড","আঙুলের ছাপ","চোখের আইরিশ","মুখের অবয়ব"]],
+[1,"ই-গভর্নেন্সের মূল উদ্দেশ্য কী?",["সরকারি সেবা সহজ ও অনলাইনে পৌঁছে দেওয়া","ট্যাক্স বাড়ানো","ইন্টারনেটের গতি বাড়ানো","শেয়ার বাজার নিয়ন্ত্রণ করা"]],
+[1,"Data ও Information-এর সঠিক সম্পর্ক কোনটি?",["Information হলো প্রক্রিয়াজাত Data","Data হলো প্রক্রিয়াজাত Information","Data ও Information একই","Information কখনো Data থেকে তৈরি হয় না"]],
+[1,"নিচের কোনটি ই-কমার্সের সুবিধা নয়?",["পণ্য সরাসরি হাতে নিয়ে যাচাই করা যায়","ঘরে বসে কেনাকাটা করা যায়","২৪ ঘণ্টা কেনাকাটা সম্ভব","সময় ও যাতায়াত খরচ বাঁচে"]],
+[1,"ই-লার্নিং-এর প্রধান সুবিধা কোনটি?",["যেকোনো সময় ও যেকোনো স্থান থেকে শেখা","শুধু কম্পিউটারে শেখা","শিক্ষকের সঙ্গে সরাসরি কথা বলা","বিনামূল্যে ডিগ্রি পাওয়া"]],
+[1,"নিচের বিবৃতিগুলো পড়ো:\ni. তথ্য হলো প্রক্রিয়াজাত উপাত্ত।\nii. ই-গভর্নেন্সে সরকারি সেবা অনলাইনে দেওয়া হয়।\niii. বিশ্বায়নে ICT-র কোনো ভূমিকা নেই।\nকোনটি সঠিক?",["i, ii ও iii","i ও ii","i ও iii","ii ও iii"],2],
+[2,"RAM-এর প্রধান বৈশিষ্ট্য কোনটি?",["অস্থায়ী (Volatile) মেমোরি","স্থায়ী মেমোরি","শুধু Read-only","বাহ্যিক মেমোরি"]],
+[2,"POST (Power On Self Test)-এর কাজ কোনটি?",["বুটের সময় হার্ডওয়্যার ঠিক আছে কি না পরীক্ষা করা","ভাইরাস মুছে ফেলা","ফাইলের ব্যাকআপ নেওয়া","ইন্টারনেটের গতি পরিমাপ করা"]],
+[2,"BIOS প্রোগ্রাম সাধারণত কোন মেমোরিতে সংরক্ষিত থাকে?",["ROM","RAM","Cache","Hard Disk"]],
+[2,"CMOS ব্যাটারি নষ্ট হলে কী সমস্যা হয়?",["তারিখ ও সময় বারবার রিসেট হয়","ইন্টারনেট বন্ধ হয়ে যায়","সাউন্ড বন্ধ হয়","স্ক্রিন ঝাপসা হয়"]],
+[2,"কম্পিউটার অতিরিক্ত গরম হয়ে বারবার বন্ধ হওয়ার কারণ—\ni. CPU ফ্যান নষ্ট থাকা\nii. ভেন্টিলেশন ঠিক না থাকা\niii. মনিটর পুরোনো হওয়া\nনিচের কোনটি সঠিক?",["i ও iii","i ও ii","ii ও iii","i, ii ও iii"],2],
+[2,"রাফির কম্পিউটার চালু করলে বিপ বিপ শব্দ হয় এবং স্ক্রিনে কিছু আসে না। সবচেয়ে সম্ভাব্য কারণ কোনটি?",["RAM ঠিকমতো লাগানো নেই বা নষ্ট","মাউস নষ্ট","ইন্টারনেট সংযোগ নেই","কিবোর্ডের কী উঠে গেছে"]],
+[2,"সুমনের কম্পিউটার কিছুক্ষণ চলার পর নিজে নিজে বন্ধ হয়ে যায়। খুলে দেখা গেল ফ্যান ধুলায় আটকে আছে। সমাধান কোনটি?",["ফ্যান ও ভেতরের ধুলা পরিষ্কার করা","অ্যান্টিভাইরাস কেনা","নতুন মাউস কেনা","ইন্টারনেট প্যাকেজ বদলানো"]],
+[2,"কম্পিউটারের গতি ধীর হওয়ার প্রধান কারণ কোনটি?",["ভাইরাস বা RAM কম","নতুন মাউস ব্যবহার","মনিটর বড় হওয়া","কিবোর্ড পুরোনো হওয়া"]],
+[2,"'Boot Disk Failure' হওয়ার প্রধান কারণ কোনটি?",["হার্ডডিস্ক নষ্ট বা সংযোগ ঢিলা","RAM নষ্ট","প্রসেসর গরম","মনিটর নষ্ট"]],
+[2,"ত্রুটি হওয়ার আগেই নেওয়া ব্যবস্থাকে কী বলে?",["প্রতিরোধমূলক রক্ষণাবেক্ষণ","সংশোধনমূলক রক্ষণাবেক্ষণ","জরুরি রক্ষণাবেক্ষণ","সফটওয়্যার রক্ষণাবেক্ষণ"]],
+[2,"কম্পিউটারে ত্রুটি দেখা দেওয়ার পর তা মেরামত করাকে কী বলে?",["সংশোধনমূলক রক্ষণাবেক্ষণ","প্রতিরোধমূলক রক্ষণাবেক্ষণ","নিয়মিত রক্ষণাবেক্ষণ","হার্ডওয়্যার রক্ষণাবেক্ষণ"]],
+[2,"ভাইরাস সংক্রমণ রোধে করণীয়—\ni. অ্যান্টিভাইরাস আপডেট রাখা\nii. অজানা লিংকে ক্লিক না করা\niii. পেনড্রাইভ স্ক্যান না করেই ব্যবহার করা\nনিচের কোনটি সঠিক?",["i ও iii","ii ও iii","i ও ii","i, ii ও iii"],3],
+[2,"সাব্বির একটি ফ্রি গেম ডাউনলোড করল। গেমটির সঙ্গে ঢুকে একটি প্রোগ্রাম গোপনে তার পাসওয়ার্ড অন্যের কাছে পাঠিয়ে দিচ্ছে। প্রোগ্রামটি কী?",["Trojan Horse","Worm","Firewall","Backup"]],
+[2,"Trojan Horse ও Worm-এর মধ্যে মূল পার্থক্য কোনটি?",["Worm নিজে নিজে নেটওয়ার্কে ছড়ায়, Trojan ছদ্মবেশে ঢোকে","Trojan নিজে ছড়ায়, Worm ছদ্মবেশে ঢোকে","দুটিই হার্ডওয়্যার","দুটির কাজ হুবহু এক"]],
+[2,"ভুয়া ওয়েবসাইট বা ইমেইল পাঠিয়ে তথ্য হাতিয়ে নেওয়াকে কী বলে?",["ফিশিং (Phishing)","হ্যাকিং","পাইরেসি","স্প্যাম"]],
+[2,"অনুমতি ছাড়া অন্যের কম্পিউটার সিস্টেমে প্রবেশ করাকে কী বলে?",["হ্যাকিং","ফিশিং","পাইরেসি","স্প্যাম"]],
+[2,"OTP-এর পূর্ণরূপ কোনটি?",["One Time Password","One Type Password","Online Transfer Password","Open Time Password"]],
+[2,"Two Factor Authentication (2FA) কী?",["দুই ধাপে নিরাপত্তা যাচাই","দুইবার পাসওয়ার্ড দেওয়া","দুটি কম্পিউটার ব্যবহার","দুটি ইন্টারনেট লাইন"]],
+[2,"নিচের কোনটি শক্তিশালী পাসওয়ার্ডের বৈশিষ্ট্য?",["অক্ষর, সংখ্যা ও বিশেষ চিহ্নের মিশ্রণ","শুধু নিজের নাম","শুধু জন্মতারিখ","123456"]],
+[2,"ফায়ারওয়াল কী কাজ করে?",["নেটওয়ার্কে অননুমোদিত প্রবেশ ঠেকায়","কম্পিউটার ঠান্ডা রাখে","ফাইল ডিলিট করে","ইন্টারনেটের গতি বাড়ায়"]],
+[2,"নিচের কোনটি সাইবার অপরাধ নয়?",["অনলাইনে ক্লাস করা","হ্যাকিং","ফিশিং","পাইরেসি"]],
+[2,"রহিমের কম্পিউটারের সব ফাইল হঠাৎ এনক্রিপ্ট হয়ে গেল এবং ফাইল ফেরত পেতে টাকা চাওয়া হলো। এটি কোন ধরনের আক্রমণ?",["Ransomware (এক ধরনের Malware)","Firewall","Defragmentation","Backup"]],
+[2,"নিচের বিবৃতিগুলো পড়ো:\ni. RAM অস্থায়ী মেমোরি।\nii. ROM-এর তথ্য বিদ্যুৎ গেলেও থাকে।\niii. CMOS ব্যাটারি নষ্ট হলে ইন্টারনেট বন্ধ হয়ে যায়।\nকোনটি সঠিক?",["i, ii ও iii","i ও iii","i ও ii","ii ও iii"],3],
+[2,"Disk Defragmenter কী কাজে ব্যবহৃত হয়?",["ছড়িয়ে থাকা ফাইল গুছিয়ে গতি বাড়াতে","ফাইল ডিলিট করতে","ফাইল প্রিন্ট করতে","ভাইরাস মারতে"]],
+[3,"ইন্টারনেট ও WWW-এর মধ্যে সম্পর্ক কী?",["WWW ইন্টারনেটের একটি সেবা বা অংশ","ইন্টারনেট WWW-এর অংশ","দুটি আলাদা নেটওয়ার্ক","দুটির মধ্যে কোনো সম্পর্ক নেই"]],
+[3,"ইন্টারনেটের জনক কে?",["ভিন্ট সার্ফ","টিম বার্নার্স লি","বিল গেটস","মার্ক জাকারবার্গ"]],
+[3,"নিচের কোনটি ওয়েব ব্রাউজারের উদাহরণ?",["Google Chrome","Google Search","Bing","Yahoo Search"]],
+[3,"নিচের কোনটি সার্চ ইঞ্জিন?",["Google","Firefox","Chrome","Opera"]],
+[3,"নিচের কোনটি ওয়েব ব্রাউজার নয়?",["Bing","Firefox","Edge","Chrome"]],
+[3,"URL-এর পূর্ণরূপ কোনটি?",["Uniform Resource Locator","Universal Resource Locator","Uniform Resource Link","Uniform Reference Locator"]],
+[3,"HTTP-এর পূর্ণরূপ কোনটি?",["HyperText Transfer Protocol","HyperText Transfer Program","HighText Transfer Protocol","HyperText Transmission Protocol"]],
+[3,"HTTPS-এর 'S' কী নির্দেশ করে?",["Secure","System","Server","Standard"]],
+[3,"ওয়েবপেজ তৈরির মূল ভাষা কোনটি?",["HTML","C","Python","BIOS"]],
+[3,"কোন প্রোটোকল ফাইল ট্রান্সফারের জন্য ব্যবহৃত হয়?",["FTP","HTTP","SMTP","HTML"]],
+[3,"ইন্টারনেটে তথ্য আদান-প্রদানের নিয়মকে কী বলে?",["প্রোটোকল","প্রোগ্রাম","সফটওয়্যার","হার্ডওয়্যার"]],
+[3,"ইমেইলে 'BCC'-এর কাজ কী?",["গোপন অনুলিপি পাঠানো, অন্যরা প্রাপককে দেখে না","সবাইকে দেখিয়ে অনুলিপি পাঠানো","ইমেইল ডিলিট করা","ইমেইল ব্লক করা"]],
+[3,"এক ওয়েবপেজ থেকে অন্য ওয়েবপেজে যাওয়ার সংযোগকে কী বলে?",["Hyperlink","Antivirus","Firewall","Hardware"]],
+[3,"https://www.dhakaeducationboard.gov.bd ঠিকানায় 'gov' কী নির্দেশ করে?",["সরকারি প্রতিষ্ঠান","শিক্ষা প্রতিষ্ঠান","বাণিজ্যিক প্রতিষ্ঠান","অলাভজনক সংস্থা"]],
+[3,"ওয়েবসাইটে ভিজিটের সময় ব্রাউজারে জমা হওয়া ছোট তথ্য-ফাইলকে কী বলে?",["কুকিজ (Cookies)","অ্যান্টিভাইরাস","ফায়ারওয়াল","ম্যালওয়্যার"]],
+[3,"ডোমেইন নামের শেষে '.bd' কী নির্দেশ করে?",["বাংলাদেশ","ব্রাউজার ডেটা","ব্যাকআপ ডিস্ক","বিজনেস ডকুমেন্ট"]],
+[3,"ইমেইলের ক্ষেত্রে—\ni. To-তে প্রধান প্রাপকের ঠিকানা দেওয়া হয়\nii. CC-তে অনুলিপি পাঠানো হয় এবং সবাই দেখতে পায়\niii. BCC-তে দেওয়া ঠিকানা অন্য প্রাপকরা দেখতে পায়\nনিচের কোনটি সঠিক?",["i ও iii","ii ও iii","i, ii ও iii","i ও ii"],4],
+[3,"নিচের কোনটি সঠিক ইমেইল ঠিকানা?",["rahim@gmail.com","rahim.gmail.com","@rahimgmail.com","rahim@.com"]],
+[3,"নিচের বিবৃতিগুলো পড়ো:\ni. Chrome একটি সার্চ ইঞ্জিন।\nii. Firefox একটি ওয়েব ব্রাউজার।\niii. HTTP-এর পূর্ণরূপ HyperText Transfer Protocol।\nকোনটি সঠিক?",["i ও ii","ii ও iii","i ও iii","i, ii ও iii"],2],
+[3,"সুমি তার মোবাইলে তোলা একটি ছবি ফেসবুকে পোস্ট করল। এই কাজটিকে কী বলে?",["Upload","Download","Browsing","Booting"]],
+[4,"MS Word-এ Ctrl + X চাপলে কী হয়?",["Cut (কেটে নেওয়া)","Copy","Paste","Save"]],
+[4,"Ctrl + Z কী কাজে ব্যবহৃত হয়?",["Undo (সর্বশেষ কাজ ফিরিয়ে আনা)","Redo","Select All","Close"]],
+[4,"MS Word-এ—\ni. Ctrl+B লেখা বোল্ড করে\nii. Ctrl+I লেখা ইটালিক করে\niii. Ctrl+U লেখার ওপর দাগ (Strikethrough) দেয়\nনিচের কোনটি সঠিক?",["i, ii ও iii","i ও iii","i ও ii","ii ও iii"],3],
+[4,"ডকুমেন্টের একটি ভুল শব্দ সব জায়গায় একসঙ্গে বদলাতে কোন অপশন ব্যবহার করতে হয়?",["Find and Replace","Spelling & Grammar","Mail Merge","Page Break"]],
+[4,"MS Word-এ কোনো লেখা কপি করে অন্যত্র বসাতে কোন শর্টকাট দুটি পর পর ব্যবহার করতে হয়?",["Ctrl+C, Ctrl+V","Ctrl+X, Ctrl+Z","Ctrl+A, Ctrl+P","Ctrl+S, Ctrl+N"]],
+[4,"MS Excel ফাইলের ডিফল্ট এক্সটেনশন কোনটি?",[".xlsx",".docx",".pptx",".txt"]],
+[4,"MS Word-এ বানান ও ব্যাকরণ পরীক্ষার শর্টকাট কোনটি?",["F7","F5","F9","F11"]],
+[4,"MS Word-এ Header & Footer কোন ট্যাবে থাকে?",["Insert","Home","Review","View"]],
+[4,"পেজের মার্জিন সেট করতে কোন ট্যাবে যেতে হয়?",["Page Layout","Home","Insert","Review"]],
+[4,"MS Word-এ Mail Merge কোন ট্যাবে থাকে?",["Mailings","Home","Insert","View"]],
+[4,"MS Word-এ টেবিল তৈরির অপশন কোন ট্যাবে আছে?",["Insert","Home","Design","Review"]],
+[4,"Excel ওয়ার্কশিটে A1 থেকে D1 পর্যন্ত নির্বাচিত সেলগুলোর সমষ্টিকে কী বলে?",["রেঞ্জ","ওয়ার্কবুক","ফিল্ড","রেকর্ড"]],
+[4,"Excel-এ =B2*C2 সূত্রে B2 ও C2 কী নামে পরিচিত?",["সেল রেফারেন্স","ফাংশন","অপারেটর","ওয়ার্কবুক"]],
+[4,"MS Excel-এ যেকোনো সূত্র (Formula) কোন চিহ্ন দিয়ে শুরু হয়?",["= (সমান)","+","#","@"]],
+[4,"Excel-এ একটি সেলের ঠিকানা (Address)-এর উদাহরণ কোনটি?",["B3","3B","Row3","ColB"]],
+[4,"A1 থেকে A5 পর্যন্ত রেঞ্জ ব্যবহার করে যোগফল বের করার সঠিক সূত্র কোনটি?",["=SUM(A1:A5)","=SUM(A1,A5)","=A1+A5","=SUM(A1-A5)"]],
+[4,"A1 = 10, A2 = 20, A3 = 30 হলে =AVERAGE(A1:A3)-এর মান কত?",["20","30","60","10"]],
+[4,"B1 = 4 এবং B2 = 6 হলে =PRODUCT(B1:B2)-এর মান কত?",["24","10","2","46"]],
+[4,"C1 = 7, C2 = 15, C3 = 9, C4 = 12 হলে =MAX(C1:C4)-এর ফল কত?",["15","7","43","12"]],
+[4,"A1 = 45 হলে =IF(A1>=50,\"Pass\",\"Fail\") সেলে কী দেখাবে?",["Fail","Pass","45","50"]],
+[4,"একাধিক ওয়ার্কশিটের সমষ্টিকে কী বলে?",["Workbook","Database","Webbook","Browser"]],
+[4,"A1 = 6, A2 = 9, A3 = 12 হলে =SUM(A1:A3)/COUNT(A1:A3)-এর মান কত?",["9","27","3","18"]],
+[5,"Multimedia বলতে কী বোঝায়?",["একাধিক মিডিয়া উপাদানের (লেখা, ছবি, শব্দ, ভিডিও) সমন্বয়","শুধু লেখা","শুধু শব্দ","শুধু ছবি"]],
+[5,"একটি শিক্ষামূলক সিডিতে লেখা, ছবি, অডিও ও ভিডিও একসঙ্গে ব্যবহার করা হয়েছে। সিডিটি কোন ধরনের কনটেন্ট?",["মাল্টিমিডিয়া","শুধু টেক্সট","শুধু অডিও","হার্ডওয়্যার"]],
+[5,"ডিজিটাল ছবির ক্ষুদ্রতম একক কোনটি?",["Pixel","Protocol","Password","Browser"]],
+[5,"Animation কী?",["স্থির ছবি ধারাবাহিকভাবে বদলিয়ে গতির অনুভূতি তৈরি","শুধু অডিও রেকর্ডিং","শুধু টেক্সট এডিটিং","শুধু ডেটা সংরক্ষণ"]],
+[5,"মুদ্রিত বইয়ের বিষয়বস্তু কম্পিউটার বা মোবাইলে পড়ার উপযোগী ফরম্যাটে রূপান্তর করলে তাকে কী বলে?",["ই-বুক","ই-মেইল","ই-গভর্নেন্স","ই-কমার্স"]],
+[5,"ডিজিটাল কনটেন্টের ক্ষেত্রে—\ni. ই-বুকে টেক্সট ও ছবি থাকতে পারে\nii. ইনফোগ্রাফিক্সে তথ্য চিত্রের মাধ্যমে উপস্থাপন করা হয়\niii. ব্লগ শুধু অডিও ফরম্যাটে লেখা হয়\nনিচের কোনটি সঠিক?",["i ও iii","i, ii ও iii","ii ও iii","i ও ii"],4],
+[5,"Infographics সাধারণত কী করে?",["তথ্যকে ছবি, চার্ট ও চিহ্নে উপস্থাপন করে","CPU ঠান্ডা করে","পাসওয়ার্ড এনক্রিপ্ট করে","ফাইল মোছে"]],
+[5,"ভিডিও কনটেন্টে সাধারণত কোন দুটি উপাদান থাকে?",["Image (ছবির ফ্রেম) ও Audio","RAM ও ROM","CPU ও BIOS","URL ও HTTP"]],
+[5,"MP3 কোন ধরনের ফাইল ফরম্যাট?",["অডিও","ভিডিও","ছবি","টেক্সট"]],
+[5,"নিচের কোনটি ছবি সম্পাদনার (গ্রাফিক্স) সফটওয়্যার?",["Adobe Photoshop","MS Excel","Kaspersky","Google Chrome"]],
+[5,"নিচের বিবৃতিগুলো পড়ো:\ni. মাল্টিমিডিয়ায় টেক্সট, অডিও ও ভিডিও থাকতে পারে।\nii. Pixel ডিজিটাল ছবির ক্ষুদ্রতম একক।\niii. MP3 একটি ভিডিও ফরম্যাট।\nকোনটি সঠিক?",["i ও iii","i ও ii","ii ও iii","i, ii ও iii"],2],
+[6,"কম্পিউটার প্রোগ্রাম কী?",["কম্পিউটারকে কাজ করানোর নির্দেশনার সমষ্টি","শুধু হার্ডওয়্যার","শুধু ডেটা","শুধু ইন্টারনেট"]],
+[6,"ফ্লোচার্টের ক্ষেত্রে—\ni. Terminal চিহ্ন শুরু ও শেষ বোঝায়\nii. Decision চিহ্ন রম্বস আকৃতির\niii. Process চিহ্ন বৃত্তাকার\nনিচের কোনটি সঠিক?",["i ও iii","ii ও iii","i, ii ও iii","i ও ii"],4],
+[6,"অ্যালগরিদম কী?",["সমস্যা সমাধানের ধাপে ধাপে পদ্ধতি","একটি হার্ডওয়্যার","একটি ব্রাউজার","একটি অ্যান্টিভাইরাস"]],
+[6,"ফ্লোচার্ট কী?",["অ্যালগরিদমের চিত্ররূপ","একটি অপারেটিং সিস্টেম","একটি সার্চ ইঞ্জিন","একটি স্টোরেজ ডিভাইস"]],
+[6,"ফ্লোচার্টে সিদ্ধান্ত (হ্যাঁ/না) বোঝাতে কোন আকৃতি ব্যবহৃত হয়?",["Diamond (রম্বস)","Rectangle","Oval","Parallelogram"]],
+[6,"ফ্লোচার্টে শুরু ও শেষ বোঝাতে কোন আকৃতি ব্যবহৃত হয়?",["Oval (Terminal)","Diamond","Rectangle","Parallelogram"]],
+[6,"একটি প্রোগ্রামে sum = 0 নেওয়া হলো এবং i-এর মান ১ থেকে ৪ পর্যন্ত প্রতিবার sum = sum + i করা হলো। শেষে sum-এর মান কত?",["10","4","24","6"]],
+[6,"ভেরিয়েবল (Variable) কী?",["পরিবর্তনশীল মান রাখার জন্য নামযুক্ত স্থান","শুধু আউটপুট ডিভাইস","একটি ব্রাউজার","একটি নেটওয়ার্ক"]],
+[6,"প্রোগ্রামের ভুল খুঁজে সংশোধন করার প্রক্রিয়াকে কী বলে?",["Debugging","Downloading","Bookmarking","Formatting"]],
+[6,"একটি প্রোগ্রামে লেখা আছে x = 5 এবং y = x + 3। প্রোগ্রাম চলার পর y-এর মান কত হবে?",["8","5","3","15"]],
+[6,"নিচের কোনটি প্রোগ্রামিং ভাষা নয়?",["HTML","C","Python","Java"]]
+];
+const TOTAL=R.length, DUR=50*60*1000, KEY="ict-mcq-exam-v2", KS=["ক","খ","গ","ঘ"];
+const cor=r=>r[3]?r[3]-1:0;
+const bn=n=>String(n).replace(/\d/g,d=>"০১২৩৪৫৬৭৮৯"[d]);
+const $=id=>document.getElementById(id);
+const app=$("app");
+function sh(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+// Mixed order: pick randomly from chapters, never the same chapter twice in a row when avoidable
+function mixOrder(){
+  const pools={};R.forEach((r,i)=>{(pools[r[0]]=pools[r[0]]||[]).push(i)});
+  for(const k in pools)pools[k]=sh(pools[k]);
+  const out=[];let last=-1;
+  while(out.length<TOTAL){
+    let keys=Object.keys(pools).filter(k=>pools[k].length);
+    let cand=keys.filter(k=>+k!==last);
+    if(!cand.length)cand=keys;
+    const wsum=cand.reduce((s,k)=>s+pools[k].length,0);
+    let x=Math.random()*wsum,pick=cand[0];
+    for(const k of cand){x-=pools[k].length;if(x<=0){pick=k;break}}
+    out.push(pools[pick].pop());last=+pick;
+  }
+  return out;
+}
+function newExam(){
+  const perm={};
+  R.forEach((r,i)=>perm[i]=r[3]?[0,1,2,3]:sh([0,1,2,3]));
+  return{order:mixOrder(),perm,ans:{},cur:0,end:0,done:false,started:false};
+}
+let S=null;
+try{S=JSON.parse(localStorage.getItem(KEY)||"null")}catch(e){}
+if(!S||!S.order||S.order.length!==TOTAL)S=newExam();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+
+let tick=null;
+function fmt(ms){ms=Math.max(0,ms);const s=Math.ceil(ms/1000),m=Math.floor(s/60),r=s%60;return bn(String(m).padStart(2,"0"))+":"+bn(String(r).padStart(2,"0"))}
+function startTimer(){
+  clearInterval(tick);
+  const upd=()=>{
+    const left=S.end-Date.now();
+    const el=$("tm");
+    if(el){el.textContent=fmt(left);el.classList.toggle("low",left<=5*60*1000)}
+    if(left<=0){clearInterval(tick);submit()}
+  };
+  upd();tick=setInterval(upd,500);
+}
+
+function home(){
+  app.innerHTML=`<div class="center"><h1>ICT MCQ Exam</h1><button class="btn main" id="go">শুরু করো</button></div>`;
+  $("go").onclick=()=>{S=newExam();S.started=true;S.end=Date.now()+DUR;save();exam()};
+}
+function exam(){
+  if(!S.started){home();return}
+  if(S.done){result();return}
+  const qi=S.order[S.cur],r=R[qi],p=S.perm[qi],a=S.ans[qi];
+  const answered=Object.keys(S.ans).length;
+  const opts=p.map((oi,i)=>`<button type="button" class="opt ${a===oi?"sel":""}" data-o="${oi}"><span class="k">${KS[i]}</span><span>${r[2][oi]}</span></button>`).join("");
+  const dots=S.order.map((q,i)=>`<button type="button" class="dot ${S.ans[q]!==undefined?"a":""} ${i===S.cur?"c":""}" data-j="${i}">${bn(i+1)}</button>`).join("");
+  const last=S.cur===TOTAL-1;
+  app.innerHTML=`<div class="top"><span class="timer" id="tm">${fmt(S.end-Date.now())}</span><span class="cnt">${bn(answered)}/${bn(TOTAL)}</span><button class="btn sub" id="sub" type="button">সাবমিট</button></div>
+  <div class="card"><div class="qn">প্রশ্ন ${bn(S.cur+1)}/${bn(TOTAL)}</div><p class="q">${r[1]}</p><div class="opts">${opts}</div>
+  <div class="nav"><button class="btn" id="prev" type="button" ${S.cur===0?"disabled":""}>আগের</button><button class="btn main" id="next" type="button" ${last?"disabled":""}>${a===undefined?"স্কিপ":"পরের"}</button></div></div>
+  <div class="grid">${dots}</div>`;
+  startTimer();
+}
+function go(j){S.cur=Math.min(TOTAL-1,Math.max(0,j));save();exam();window.scrollTo({top:0})}
+function submit(){
+  if(S.done)return;
+  S.done=true;clearInterval(tick);save();result();window.scrollTo({top:0});
+}
+function result(){
+  let ok=0,bad=0,sk=0;const wl=[];
+  S.order.forEach((qi,i)=>{
+    const a=S.ans[qi];
+    if(a===undefined){sk++;wl.push([i,qi,a])}
+    else if(a===cor(R[qi]))ok++;
+    else{bad++;wl.push([i,qi,a])}
+  });
+  const items=wl.map(([i,qi,a])=>{
+    const r=R[qi];
+    return `<div class="wr"><div class="qn">প্রশ্ন ${bn(i+1)}</div><p class="q">${r[1]}</p>
+    ${a===undefined?`<div class="ln s"><span>✗</span><span>উত্তর দেওয়া হয়নি</span></div>`:`<div class="ln y"><span>✗</span><span>তোমার উত্তর: ${r[2][a]}</span></div>`}
+    <div class="ln r"><span>✓</span><span>সঠিক উত্তর: ${r[2][cor(r)]}</span></div></div>`;
+  }).join("");
+  app.innerHTML=`<div class="center" style="min-height:auto;padding-top:32px;gap:14px"><div class="score">${bn(ok)}/${bn(TOTAL)}</div>
+  <div class="stats" style="width:100%"><div class="s-ok"><b>${bn(ok)}</b>সঠিক</div><div class="s-bad"><b>${bn(bad)}</b>ভুল</div><div class="s-sk"><b>${bn(sk)}</b>স্কিপ</div></div></div>
+  ${wl.length?`<h2>ভুল ও স্কিপ</h2>${items}`:""}
+  <div class="nav" style="margin-top:20px"><button class="btn main" id="again" type="button">আবার পরীক্ষা দাও</button></div>`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.o!==undefined){
+    const qi=S.order[S.cur],v=+t.dataset.o;
+    if(S.ans[qi]===v)delete S.ans[qi];else S.ans[qi]=v;
+    save();exam();return;
+  }
+  if(t.dataset.j!==undefined){go(+t.dataset.j);return}
+  if(t.id==="prev"){go(S.cur-1);return}
+  if(t.id==="next"){go(S.cur+1);return}
+  if(t.id==="sub"){
+    const left=TOTAL-Object.keys(S.ans).length;
+    const m=document.createElement("div");
+    m.className="modal";m.id="modal";
+    m.innerHTML=`<div class="mbox"><p>${left?`${bn(left)}টি প্রশ্নের উত্তর দেওয়া হয়নি। সাবমিট করবে?`:"সাবমিট করবে?"}</p><div class="nav"><button class="btn" id="mno" type="button">না</button><button class="btn sub" id="myes" type="button">সাবমিট</button></div></div>`;
+    document.body.appendChild(m);
+    return;
+  }
+  if(t.id==="mno"){const m=$("modal");if(m)m.remove();return}
+  if(t.id==="myes"){const m=$("modal");if(m)m.remove();submit();return}
+  if(t.id==="again"){S=newExam();save();home()}
+});
+if(S.started&&!S.done){if(Date.now()>=S.end){S.done=true;save();result()}else exam()}
+else if(S.done)result();
+else home();
+</script>
+</body>
+</html>
